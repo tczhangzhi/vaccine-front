@@ -1,0 +1,13 @@
+{
+  "user": {
+    "getter": {
+      "user": "user"
+    },
+    "action": {
+      "update": "update"
+    },
+    "mutation": {
+      "update": "update"
+    }
+  }
+}
