@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
-axios.defaults.timeout = 6000
+axios.defaults.timeout = 1000 * 60 * 60
 axios.defaults.headers['x-csrf-token'] = Cookies.get('csrfToken')
 
 // Add a request interceptor
