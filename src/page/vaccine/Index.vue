@@ -51,6 +51,9 @@
             <el-input v-model.number="config.end" placeholder="请输入最晚接种时间"></el-input>
           </el-form-item>
           <el-form-item>
+            <el-input v-model.number="config.space" placeholder="请输入与下一针间隔"></el-input>
+          </el-form-item>
+          <el-form-item>
             <el-button @click="handleDeleteCreateClick(index)">删除</el-button>
           </el-form-item>
         </el-row>
@@ -73,6 +76,9 @@
           </el-form-item>
           <el-form-item>
             <el-input v-model.number="config.end" placeholder="请输入最晚接种时间"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input v-model.number="config.space" placeholder="请输入与下一针间隔"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button @click="handleDeleteEditClick(index)">删除</el-button>
@@ -131,6 +137,11 @@ export default {
                 type: 'number',
                 required: true,
                 message: '请输入最晚接种时间'
+              },
+              space: {
+                type: 'number',
+                required: true,
+                message: '请输入与下一针间隔'
               }
             }
           }
@@ -151,6 +162,11 @@ export default {
                 type: 'number',
                 required: true,
                 message: '请输入最晚接种时间'
+              },
+              space: {
+                type: 'number',
+                required: true,
+                message: '请输入与下一针间隔'
               }
             }
           }
@@ -204,8 +220,9 @@ export default {
     init () {
       return {
         scheduling: [{
-          start: 0,
-          end: 0
+          start: '',
+          end: '',
+          space: ''
         }]
       }
     },
@@ -280,14 +297,16 @@ export default {
     },
     handleCreateCreateClick () {
       this.create.scheduling.push({
-        start: 0,
-        end: 0
+        start: '',
+        end: '',
+        space: ''
       })
     },
     handleCreateEditClick () {
       this.edit.scheduling.push({
-        start: 0,
-        end: 0
+        start: '',
+        end: '',
+        space: ''
       })
     }
   }
