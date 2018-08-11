@@ -3,10 +3,7 @@
     <el-row>
       <el-form inline>
         <el-form-item label="最早接种时间:">
-          <el-input v-model.number="query.start" placeholder="请输入最早接种时间"></el-input>
-        </el-form-item>
-        <el-form-item label="最晚接种时间:">
-          <el-input v-model.number="query.end" placeholder="请输入最晚接种时间"></el-input>
+          <el-input v-model.number="query.time" placeholder="请输入注射剂次"></el-input>
         </el-form-item>
         <el-form-item label="疫苗种类:">
           <el-input v-model.number="query.configId" placeholder="请输入疫苗种类"></el-input>
@@ -28,8 +25,8 @@
         :data="tableData"
         border>
         <el-table-column label="编号" prop="id"></el-table-column>
-        <el-table-column label="最早接种时间" prop="start"></el-table-column>
-        <el-table-column label="最晚接种时间" prop="end"></el-table-column>
+        <el-table-column label="即将注射剂次" prop="time"></el-table-column>
+        <el-table-column label="上一次决策" prop="decision"></el-table-column>
         <el-table-column label="疫苗种类" prop="configId"></el-table-column>
         <el-table-column label="儿童姓名" prop="name"></el-table-column>
         <el-table-column label="操作" width="125">
@@ -55,11 +52,11 @@
       title="新增"
       :visible.sync="showCreate">
       <el-form :model="create" :rules="createRule" ref="create">
-        <el-form-item label="最早接种时间:">
-          <el-input disabled v-model.number="create.start" placeholder="请输入最早接种时间"></el-input>
+        <el-form-item label="即将注射剂次:">
+          <el-input v-model.number="create.time" placeholder="请输入即将注射剂次"></el-input>
         </el-form-item>
-        <el-form-item label="最晚接种时间:">
-          <el-input disabled v-model.number="create.end" placeholder="请输入最晚接种时间"></el-input>
+        <el-form-item label="上一次决策:">
+          <el-input v-model="create.decision" placeholder="请输入上一次决策"></el-input>
         </el-form-item>
         <el-form-item label="疫苗种类:">
           <el-select
@@ -68,27 +65,12 @@
             filterable
             remote
             :remote-method="fetchConfigList"
-            @change="handleConfigIdChange(create.configId)"
             style="width: 100%">
             <el-option
               v-for="item in configList"
               :key="item.id"
               :label="item.id"
               :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="接种阶段:">
-          <el-select
-            v-model.number="create.times"
-            @change="handleTimesCreateChange(create.times)"
-            placeholder="请选择接种阶段"
-            style="width: 100%">
-            <el-option
-              v-for="item in Object.keys(timesList)"
-              :key="item"
-              :label="item"
-              :value="item"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -120,11 +102,11 @@
         <el-form-item label="编号:">
           <el-input v-model="edit.id" readonly></el-input>
         </el-form-item>
-        <el-form-item label="最早接种时间:">
-          <el-input disabled v-model.number="edit.start" placeholder="请输入最早接种时间"></el-input>
+        <el-form-item label="即将注射剂次:">
+          <el-input v-model.number="edit.time" placeholder="请输入即将注射剂次"></el-input>
         </el-form-item>
-        <el-form-item label="最晚接种时间:">
-          <el-input disabled v-model.number="edit.end" placeholder="请输入最晚接种时间"></el-input>
+        <el-form-item label="上一次决策:">
+          <el-input v-model="edit.decision" placeholder="请输入上一次决策"></el-input>
         </el-form-item>
         <el-form-item label="疫苗种类:">
           <el-select
@@ -133,27 +115,12 @@
             filterable
             remote
             :remote-method="fetchConfigList"
-            @change="handleConfigIdChange(edit.configId)"
             style="width: 100%">
             <el-option
               v-for="item in configList"
               :key="item.id"
               :label="item.id"
               :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="接种阶段:">
-          <el-select
-            v-model.number="edit.times"
-            @change="handleTimesEditChange(edit.times)"
-            placeholder="请选择接种阶段"
-            style="width: 100%">
-            <el-option
-              v-for="item in Object.keys(timesList)"
-              :key="item"
-              :label="item"
-              :value="item"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -244,8 +211,7 @@ export default {
       },
       tableData: [],
       childList: [],
-      configList: [],
-      timesList: []
+      configList: []
     }
   },
   methods: {
@@ -293,10 +259,9 @@ export default {
     init () {
       return {
         id: '',
-        start: 0,
-        end: 0,
         configId: 0,
-        times: 0,
+        time: 0,
+        decision: '[0, 0, 0, 0]',
         childId: ''
       }
     },
@@ -381,26 +346,6 @@ export default {
           type: 'error'
         })
       })
-    },
-    handleConfigIdChange (id) {
-      if (!id || this.configList.length === 0) {
-        return
-      }
-      this.timesList = this.configList.find(item => item.id === id).scheduling
-    },
-    handleTimesEditChange (index) {
-      if (this.timesList.length === 0) {
-        return
-      }
-      this.edit.start = this.timesList[index].start
-      this.edit.end = this.timesList[index].end
-    },
-    handleTimesCreateChange (index) {
-      if (this.timesList.length === 0) {
-        return
-      }
-      this.create.start = this.timesList[index].start
-      this.create.end = this.timesList[index].end
     }
   }
 }

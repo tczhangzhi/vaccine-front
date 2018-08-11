@@ -44,7 +44,7 @@ export default {
   // download data
   download (params) {
     return $ajax({
-      url: serverUrl('child/download'),
+      url: serverUrl('child/downloadJSON'),
       params,
       timeout: 0
     })
